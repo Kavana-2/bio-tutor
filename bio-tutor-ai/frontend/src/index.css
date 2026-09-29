@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Inter', sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 33% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 33% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 33% 11%;
+    --primary: 333 80% 69%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 199 88% 94%;
+    --secondary-foreground: 222 33% 15%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 40%;
+    --accent: 330 86% 95%;
+    --accent-foreground: 333 60% 42%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 158 64% 40%;
+    --border: 320 50% 92%;
+    --input: 320 30% 86%;
+    --ring: 333 80% 69%;
+    --radius: 0.75rem;
+    --surface: 210 20% 98%;
+  }
+  .dark {
+    --background: 222 30% 8%;
+    --foreground: 210 20% 96%;
+    --card: 222 25% 12%;
+    --card-foreground: 210 20% 96%;
+    --popover: 222 25% 12%;
+    --popover-foreground: 210 20% 96%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 20% 18%;
+    --secondary-foreground: 210 20% 96%;
+    --muted: 217 20% 18%;
+    --muted-foreground: 217 12% 62%;
+    --accent: 217 30% 20%;
+    --accent-foreground: 217 91% 75%;
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 158 64% 42%;
+    --border: 217 19% 22%;
+    --input: 217 19% 22%;
+    --ring: 217 91% 60%;
+    --surface: 222 28% 10%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0; }
+button, a, input, select { transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .2s ease; }
+button:hover:not(:disabled) { transform: translateY(-1px); }
+
+.surface { background-color: hsl(var(--surface)); }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.4s ease-out both; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }

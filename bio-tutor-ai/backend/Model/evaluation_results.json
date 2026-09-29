@@ -1,0 +1,15 @@
+{
+  "model": "all-MiniLM-L6-v2",
+  "test_size": 10,
+  "topic_classification": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "retrieval": {
+    "retrieval_accuracy_top1": 0.9,
+    "retrieval_accuracy_top3": 0.9,
+    "mean_confidence": 0.726
+  }
+}
