@@ -3,11 +3,18 @@ import api, { formatApiError } from "../lib/api";
 import { Page, Card, EmptyState, Spinner } from "../components/common";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/tabs";
-import { Upload, FileText, Trash2, Search, Bookmark, Loader2, ChevronLeft, ChevronRight, Send } from "lucide-react";
+import { Upload, FileText, Trash2, Search, Bookmark, Loader2, ChevronLeft, ChevronRight, Send, FileCode, FileSpreadsheet, Presentation, Image as ImageIcon, Sparkles, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 
 const SUPPORTED_DOCUMENT_TYPES = ".pdf,.docx,.pptx,.txt,.md,.csv,.xlsx,.png,.jpg,.jpeg,.bmp,.tif,.tiff,.webp,.html,.htm,.json";
+
+function getFileIcon(type) {
+  if (type === "pptx" || type === "ppt") return Presentation;
+  if (type === "xlsx" || type === "csv") return FileSpreadsheet;
+  if (type === "png" || type === "jpg" || type === "jpeg" || type === "webp") return ImageIcon;
+  if (type === "json" || type === "html" || type === "md") return FileCode;
+  return FileText;
+}
 
 export default function PDFStudy() {
   const [pdfs, setPdfs] = useState(null);
@@ -33,7 +40,7 @@ export default function PDFStudy() {
       load();
     } catch (err) {
       const detail = err.response?.data?.detail;
-      toast.error(detail ? formatApiError(detail) : "Upload failed. Check that the backend is running and use .docx/.pptx (legacy .doc/.ppt files aren't supported)." );
+      toast.error(detail ? formatApiError(detail) : "Upload failed. Check that backend is running.");
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
@@ -42,7 +49,7 @@ export default function PDFStudy() {
 
   const remove = async (id) => {
     await api.delete(`/pdfs/${id}`);
-    toast.success("Deleted");
+    toast.success("Document deleted");
     if (selected?.id === id) setSelected(null);
     load();
   };
@@ -50,40 +57,71 @@ export default function PDFStudy() {
   if (selected) return <PDFViewer id={selected.id} onBack={() => setSelected(null)} />;
 
   return (
-    <Page title="Study Library" subtitle="PDF, .docx Word, .pptx PowerPoint, Excel, CSV, text, HTML, JSON, and images · image OCR requires Tesseract"
+    <Page
+      title="Study Notes Library"
+      subtitle="Supported: PDF, Word, PowerPoint, Excel, CSV, Text, HTML, JSON & Images"
       testid="pdf-page"
       actions={
         <>
           <input ref={fileRef} type="file" accept={SUPPORTED_DOCUMENT_TYPES} className="hidden" onChange={upload} data-testid="pdf-file-input" />
-          <Button onClick={() => fileRef.current?.click()} disabled={uploading} data-testid="pdf-upload-btn">
-            {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Upload className="h-4 w-4 mr-1" />}
-            Upload document
+          <Button onClick={() => fileRef.current?.click()} disabled={uploading} className="font-semibold shadow-md shadow-primary/20" data-testid="pdf-upload-btn">
+            {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
+            Upload Study Document
           </Button>
         </>
-      }>
+      }
+    >
       {pdfs === null ? (
         <Spinner />
       ) : pdfs.length === 0 ? (
-          <EmptyState icon={FileText} title="No notes uploaded yet"
-          description="Upload PDFs, Word or PowerPoint files, spreadsheets, text, or images. We extract text and tables to build a personal study library. Image and scanned-PDF OCR requires Tesseract."
-          action={<Button onClick={() => fileRef.current?.click()} data-testid="pdf-empty-upload"><Upload className="h-4 w-4 mr-1" /> Upload your first document</Button>}
-          testid="pdf-empty" />
+        <EmptyState
+          icon={FileText}
+          title="Your document library is empty"
+          description="Upload your Biology lecture notes, PDFs, or slides. We extract text and build interactive AI lessons, summaries, MCQs, and flashcards."
+          action={
+            <Button onClick={() => fileRef.current?.click()} className="font-semibold shadow-md shadow-primary/20" data-testid="pdf-empty-upload">
+              <Upload className="h-4 w-4 mr-2" /> Upload First Document
+            </Button>
+          }
+          testid="pdf-empty"
+        />
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {pdfs.map((p) => (
-            <Card key={p.id} className="cursor-pointer group" onClick={() => setSelected(p)} data-testid="pdf-card">
-              <div className="flex items-start justify-between mb-3">
-                <div className="h-10 w-10 rounded-md bg-accent flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-accent-foreground" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {pdfs.map((p) => {
+            const IconComponent = getFileIcon(p.document_type);
+            return (
+              <Card
+                key={p.id}
+                className="cursor-pointer group hover:border-primary/40 relative flex flex-col justify-between"
+                onClick={() => setSelected(p)}
+                data-testid="pdf-card"
+              >
+                <div>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <IconComponent className="h-5.5 w-5.5" />
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); remove(p.id); }}
+                      className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                      data-testid="pdf-delete"
+                      title="Delete document"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <p className="font-bold text-base text-foreground truncate group-hover:text-primary transition-colors">{p.filename}</p>
+                  <p className="text-xs text-muted-foreground mt-1 font-medium">
+                    {p.num_units ?? p.num_pages} {p.document_type === "pptx" ? "slides" : p.document_type === "xlsx" ? "sheets" : "pages"} · {p.topic_name}
+                  </p>
                 </div>
-                <button onClick={(e) => { e.stopPropagation(); remove(p.id); }} className="text-muted-foreground hover:text-destructive" data-testid="pdf-delete">
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-              <p className="font-medium truncate group-hover:text-primary transition-colors">{p.filename}</p>
-              <p className="text-xs text-muted-foreground mt-1">{p.num_units ?? p.num_pages} {p.document_type === "pptx" ? "slides" : p.document_type === "xlsx" ? "sheets" : p.document_type === "pdf" ? "pages" : "sections"} · {p.topic_name}</p>
-            </Card>
-          ))}
+                <div className="mt-5 pt-3 border-t border-border/50 flex items-center justify-between text-xs text-primary font-semibold">
+                  <span>Open Study Workspace</span>
+                  <ChevronRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Card>
+            );
+          })}
         </div>
       )}
     </Page>
@@ -98,7 +136,9 @@ function PDFViewer({ id, onBack }) {
   const [q, setQ] = useState("");
   const [answer, setAnswer] = useState(null);
 
-  useEffect(() => { api.get(`/pdfs/${id}`).then((r) => setPdf(r.data)); }, [id]);
+  useEffect(() => {
+    api.get(`/pdfs/${id}`).then((r) => setPdf(r.data));
+  }, [id]);
 
   const runTool = async (name) => {
     setToolLoading(name);
@@ -106,8 +146,11 @@ function PDFViewer({ id, onBack }) {
     try {
       const { data } = await api.post(`/pdfs/${id}/${name}`);
       setTools({ name, data });
-    } catch (err) { toast.error(formatApiError(err.response?.data?.detail)); }
-    finally { setToolLoading(""); }
+    } catch (err) {
+      toast.error(formatApiError(err.response?.data?.detail));
+    } finally {
+      setToolLoading("");
+    }
   };
 
   const askPage = async (e) => {
@@ -117,7 +160,10 @@ function PDFViewer({ id, onBack }) {
     try {
       const { data } = await api.post(`/pdfs/${id}/ask`, { question: q });
       setAnswer(data);
-    } catch (err) { toast.error(formatApiError(err.response?.data?.detail)); setAnswer(null); }
+    } catch (err) {
+      toast.error(formatApiError(err.response?.data?.detail));
+      setAnswer(null);
+    }
   };
 
   const bookmark = async () => {
@@ -125,47 +171,92 @@ function PDFViewer({ id, onBack }) {
     toast.success("Page bookmarked");
   };
 
-  if (!pdf) return <Page title="Loading…"><Spinner /></Page>;
+  if (!pdf) return <Page title="Loading Document…"><Spinner /></Page>;
   const currentPage = pdf.pages.find((p) => p.page === page) || pdf.pages[0];
-  const unitLabel = pdf.document_type === "pptx" ? "slides" : pdf.document_type === "xlsx" ? "sheets" : pdf.document_type === "pdf" || !pdf.document_type ? "pages" : "sections";
+  const unitLabel = pdf.document_type === "pptx" ? "slides" : pdf.document_type === "xlsx" ? "sheets" : "pages";
   const currentSource = currentPage?.source_label || `Page ${page}`;
 
   return (
-    <Page title={pdf.filename} subtitle={`${pdf.topic_name} · ${pdf.num_units ?? pdf.num_pages} ${unitLabel}`} testid="pdf-viewer"
-      actions={<Button variant="outline" onClick={onBack}>Back to library</Button>}>
+    <Page
+      title={pdf.filename}
+      subtitle={`${pdf.topic_name} · ${pdf.num_units ?? pdf.num_pages} ${unitLabel}`}
+      testid="pdf-viewer"
+      actions={<Button variant="outline" className="font-semibold" onClick={onBack}>Back to Library</Button>}
+    >
       <div className="grid lg:grid-cols-3 gap-6">
+        {/* Left 2-Col: Reader & Q&A */}
         <Card className="lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-border">
             <div className="flex items-center gap-2">
-              <Button size="icon" variant="outline" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} data-testid="pdf-prev-page"><ChevronLeft className="h-4 w-4" /></Button>
-              <span className="text-sm font-medium">{currentSource} · {page} / {pdf.num_units ?? pdf.num_pages}</span>
-              <Button size="icon" variant="outline" disabled={page >= pdf.num_pages} onClick={() => setPage((p) => p + 1)} data-testid="pdf-next-page"><ChevronRight className="h-4 w-4" /></Button>
+              <Button size="icon" variant="outline" className="h-8 w-8" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} data-testid="pdf-prev-page">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-xs font-bold text-foreground px-2">
+                {currentSource} · {page} / {pdf.num_units ?? pdf.num_pages}
+              </span>
+              <Button size="icon" variant="outline" className="h-8 w-8" disabled={page >= pdf.num_pages} onClick={() => setPage((p) => p + 1)} data-testid="pdf-next-page">
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
-            <Button size="sm" variant="ghost" onClick={bookmark} data-testid="pdf-bookmark"><Bookmark className="h-4 w-4 mr-1" /> Bookmark</Button>
+            <Button size="sm" variant="ghost" onClick={bookmark} className="text-xs font-semibold" data-testid="pdf-bookmark">
+              <Bookmark className="h-3.5 w-3.5 mr-1 text-primary" /> Bookmark
+            </Button>
           </div>
-          <div className="rounded-md bg-[hsl(var(--surface))] border border-border p-5 max-h-[50vh] overflow-y-auto text-sm leading-relaxed whitespace-pre-wrap" data-testid="pdf-page-text">
-            {currentPage?.text || "(No extractable text on this page)"}
+
+          <div className="rounded-xl bg-muted/30 border border-border p-5 max-h-[48vh] overflow-y-auto text-sm leading-relaxed text-foreground whitespace-pre-wrap font-sans" data-testid="pdf-page-text">
+            {currentPage?.text || "(No extractable text on this unit)"}
           </div>
 
           <form onSubmit={askPage} className="mt-4 flex gap-2">
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Ask about your notes…" data-testid="pdf-ask-input" />
-            <Button type="submit" data-testid="pdf-ask-btn"><Send className="h-4 w-4" /></Button>
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Ask a question about this specific document..."
+              className="h-10 rounded-xl bg-card border-border text-sm"
+              data-testid="pdf-ask-input"
+            />
+            <Button type="submit" className="h-10 px-4 font-semibold shadow-sm" data-testid="pdf-ask-btn">
+              <Send className="h-4 w-4" />
+            </Button>
           </form>
-          {answer === "loading" && <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Searching your notes…</div>}
+
+          {answer === "loading" && (
+            <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-muted-foreground p-3 rounded-xl bg-muted/40">
+              <Loader2 className="h-4 w-4 animate-spin text-primary" /> Searching extracted notes...
+            </div>
+          )}
           {answer && answer !== "loading" && (
-            <div className="mt-3 rounded-md border border-border p-4 text-sm" data-testid="pdf-ask-answer">
-              <p className="leading-relaxed">{answer.answer}</p>
-              {answer.source && <p className="text-xs text-muted-foreground mt-2">Source: {answer.source}</p>}
+            <div className="mt-3 rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs space-y-1.5" data-testid="pdf-ask-answer">
+              <p className="font-semibold text-foreground leading-relaxed">{answer.answer}</p>
+              {answer.source && <p className="text-[11px] text-muted-foreground">Source: {answer.source}</p>}
             </div>
           )}
         </Card>
 
-        <div className="space-y-4">
+        {/* Right 1-Col: Study Tools */}
+        <div className="space-y-5">
           <Card>
-            <h3 className="font-semibold tracking-tight mb-3">Study Tools</h3>
+            <h3 className="font-bold text-base tracking-tight font-display mb-3 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" /> Note Processing Tools
+            </h3>
             <div className="grid grid-cols-2 gap-2">
-              {[["summary", "Summary"], ["notes", "Smart Notes"], ["mcqs", "MCQs"], ["flashcards", "Flashcards"], ["exam-questions", "Exam Qs"], ["viva", "Viva"]].map(([k, label]) => (
-                <Button key={k} variant="outline" size="sm" onClick={() => runTool(k)} disabled={!!toolLoading} data-testid={`pdf-tool-${k}`}>
+              {[
+                ["summary", "Summary"],
+                ["notes", "Smart Notes"],
+                ["mcqs", "MCQs"],
+                ["flashcards", "Flashcards"],
+                ["exam-questions", "Exam Qs"],
+                ["viva", "Viva"]
+              ].map(([k, label]) => (
+                <Button
+                  key={k}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => runTool(k)}
+                  disabled={!!toolLoading}
+                  className="font-semibold text-xs h-9"
+                  data-testid={`pdf-tool-${k}`}
+                >
                   {toolLoading === k ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : label}
                 </Button>
               ))}
@@ -174,7 +265,9 @@ function PDFViewer({ id, onBack }) {
 
           {tools && (
             <Card data-testid="pdf-tool-output">
-              <h3 className="font-semibold tracking-tight mb-3 capitalize">{tools.name.replace("-", " ")}</h3>
+              <h3 className="font-bold text-base tracking-tight font-display mb-3 capitalize text-primary flex items-center gap-2">
+                <BookOpen className="h-4 w-4" /> {tools.name.replace("-", " ")}
+              </h3>
               <ToolOutput name={tools.name} data={tools.data} />
             </Card>
           )}
@@ -185,30 +278,31 @@ function PDFViewer({ id, onBack }) {
 }
 
 function ToolOutput({ name, data }) {
-  if (name === "summary") return <ul className="space-y-2 text-sm">{data.summary.map((s, i) => <li key={i} className="flex gap-2"><span className="text-primary">•</span>{s}</li>)}</ul>;
+  if (name === "summary") return <ul className="space-y-2 text-xs">{data.summary.map((s, i) => <li key={i} className="flex gap-2"><span className="text-primary font-bold">•</span><span className="leading-relaxed">{s}</span></li>)}</ul>;
   if (name === "notes") return (
-    <div className="text-sm space-y-3">
-      <div><p className="font-medium text-xs uppercase tracking-wide text-muted-foreground mb-1">Overview</p><p>{data.overview}</p></div>
-      <div><p className="font-medium text-xs uppercase tracking-wide text-muted-foreground mb-1">Key Points</p>
-        <ul className="space-y-1">{data.key_points.map((k, i) => <li key={i} className="flex gap-2"><span className="text-primary">•</span>{k}</li>)}</ul></div>
+    <div className="text-xs space-y-3">
+      <div><p className="font-bold uppercase tracking-wider text-muted-foreground mb-1">Overview</p><p className="leading-relaxed">{data.overview}</p></div>
+      <div><p className="font-bold uppercase tracking-wider text-muted-foreground mb-1">Key Concepts</p>
+        <ul className="space-y-1">{data.key_points.map((k, i) => <li key={i} className="flex gap-2"><span className="text-primary font-bold">•</span><span className="leading-relaxed">{k}</span></li>)}</ul></div>
     </div>
   );
-  if (name === "mcqs") return <div className="space-y-3 text-sm">{data.mcqs.map((m, i) => (
-    <div key={i}><p className="font-medium">{i + 1}. {m.question}</p>
-      <ul className="mt-1 space-y-0.5">{m.options.map((o, j) => <li key={j} className={j === m.correct_index ? "text-success font-medium" : "text-muted-foreground"}>{String.fromCharCode(65 + j)}. {o}</li>)}</ul></div>
+  if (name === "mcqs") return <div className="space-y-3 text-xs">{data.mcqs.map((m, i) => (
+    <div key={i} className="p-2.5 rounded-lg border border-border bg-muted/30"><p className="font-bold mb-1.5">{i + 1}. {m.question}</p>
+      <ul className="space-y-1 font-medium">{m.options.map((o, j) => <li key={j} className={j === m.correct_index ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-muted-foreground"}>{String.fromCharCode(65 + j)}. {o}</li>)}</ul></div>
   ))}</div>;
-  if (name === "flashcards") return <div className="space-y-2 text-sm">{data.flashcards.map((f, i) => (
-    <div key={i} className="rounded-md border border-border p-3"><p className="font-medium">{f.front}</p><p className="text-muted-foreground mt-1">{f.back}</p></div>
+  if (name === "flashcards") return <div className="space-y-2 text-xs">{data.flashcards.map((f, i) => (
+    <div key={i} className="rounded-xl border border-border p-3 bg-muted/20"><p className="font-bold text-foreground">{f.front}</p><p className="text-muted-foreground mt-1 leading-relaxed">{f.back}</p></div>
   ))}</div>;
   if (name === "exam-questions") return (
-    <div className="text-sm space-y-3">
+    <div className="text-xs space-y-3">
       {[["two_mark", "2-Mark"], ["five_mark", "5-Mark"], ["ten_mark", "10-Mark"]].map(([k, l]) => (
-        <div key={k}><p className="font-medium">{l} Questions</p><ul className="mt-1 space-y-0.5 text-muted-foreground">{(data[k] || []).map((qq, i) => <li key={i}>• {qq}</li>)}</ul></div>
+        <div key={k}><p className="font-bold text-foreground mb-1">{l} Questions</p><ul className="space-y-1 text-muted-foreground">{(data[k] || []).map((qq, i) => <li key={i} className="flex gap-1.5"><span className="text-primary">•</span><span>{qq}</span></li>)}</ul></div>
       ))}
     </div>
   );
-  if (name === "viva") return <div className="space-y-2 text-sm">{data.viva.map((v, i) => (
-    <div key={i}><p className="font-medium">Q: {v.question}</p><p className="text-muted-foreground">A: {v.answer}</p></div>
+  if (name === "viva") return <div className="space-y-2.5 text-xs">{data.viva.map((v, i) => (
+    <div key={i} className="p-2.5 rounded-lg border border-border bg-muted/20"><p className="font-bold text-foreground">Q: {v.question}</p><p className="text-muted-foreground mt-1 leading-relaxed">A: {v.answer}</p></div>
   ))}</div>;
   return null;
 }
+

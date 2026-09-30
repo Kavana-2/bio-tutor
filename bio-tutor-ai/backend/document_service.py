@@ -37,11 +37,31 @@ def _validate_office_archive(data):
             raise ValueError("Office document expands beyond the allowed processing size")
 
 
+def _tesseract_error_message():
+    return (
+        "Image OCR requires the Tesseract OCR application. Install Tesseract and add it to PATH, "
+        "then restart the backend."
+    )
+
+
+def _tesseract_path():
+    executable = shutil.which("tesseract")
+    if executable:
+        return executable
+    candidates = [
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+    ]
+    for candidate in candidates:
+        if Path(candidate).exists():
+            pytesseract.pytesseract.tesseract_cmd = candidate
+            return candidate
+    return None
+
+
 def _ocr_image(image_bytes):
-    if not shutil.which("tesseract"):
-        raise RuntimeError(
-            "Image OCR requires the Tesseract OCR application. Install Tesseract and add it to PATH, then restart the backend."
-        )
+    if not _tesseract_path():
+        raise RuntimeError(_tesseract_error_message())
     with Image.open(io.BytesIO(image_bytes)) as image:
         image = image.convert("RGB")
         image.thumbnail((3000, 3000))
@@ -51,7 +71,7 @@ def _ocr_image(image_bytes):
 
 def _image_text_or_empty(image_bytes):
     """OCR an embedded image if Tesseract is installed; preserve Office text otherwise."""
-    if not shutil.which("tesseract"):
+    if not _tesseract_path():
         return ""
     try:
         return _ocr_image(image_bytes)
@@ -64,10 +84,10 @@ def _extract_pdf(data):
     with fitz.open(stream=data, filetype="pdf") as document:
         for index, page in enumerate(document, 1):
             text = _clean(page.get_text("text"))
-            if not text and shutil.which("tesseract"):
+            if not text and _tesseract_path():
                 pixmap = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
                 text = _image_text_or_empty(pixmap.tobytes("png"))
-            if shutil.which("tesseract"):
+            if _tesseract_path():
                 image_text = []
                 seen_xrefs = set()
                 for image_info in page.get_images(full=True):
@@ -122,7 +142,7 @@ def _extract_docx(data):
         if rows:
             parts.append(f"Table {table_index}:\n" + "\n".join(rows))
     units = [{"page": 1, "source_type": "document", "source_label": "Document text and tables", "text": _clean("\n\n".join(parts))}]
-    if shutil.which("tesseract"):
+    if _tesseract_path():
         with zipfile.ZipFile(io.BytesIO(data)) as archive:
             image_index = 0
             for name in archive.namelist():
@@ -190,7 +210,12 @@ def extract_units(data, filename):
     if extension == ".pdf":
         return _extract_pdf(data)
     if extension in {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"}:
-        text = _ocr_image(data)
+        if not _tesseract_path():
+            return [{"page": 1, "source_type": "image", "source_label": "Image OCR", "text": ""}]
+        try:
+            text = _ocr_image(data)
+        except RuntimeError:
+            text = ""
         return [{"page": 1, "source_type": "image", "source_label": "Image OCR", "text": text}]
     if extension == ".docx":
         return _extract_docx(data)
@@ -225,7 +250,7 @@ def process_document(data, filename):
     units = extract_units(data, filename)
     if not any(unit["text"] for unit in units):
         suffix = Path(filename).suffix.lower()
-        if suffix in {".pdf", ".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"} and not shutil.which("tesseract"):
+        if suffix in {".pdf", ".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"} and not _tesseract_path():
             raise ValueError("No selectable text was found. Scanned PDFs and images require Tesseract OCR to be installed and added to PATH.")
         raise ValueError("No readable text or table data was found in this file.")
 

@@ -10,7 +10,7 @@ def test_reflows_broken_words_and_presents_sentences_in_sections():
 
     assert "photosynthesis" in formatted.lower()
     assert "Key statement from your notes:" in formatted
-    assert "Details:" in formatted
+    assert "Key ideas:" in formatted
     assert "• Chlorophyll absorbs sunlight in the chloroplasts." in formatted
     assert "Photo-\nsynthesis" not in formatted
 
@@ -28,3 +28,15 @@ def test_formats_ordered_process_as_steps_without_rewriting_the_facts():
 def test_single_sentence_is_not_expanded_or_paraphrased():
     source = "Chlorophyll absorbs sunlight."
     assert format_for_learning(source) == source
+
+
+def test_keeps_multiple_concepts_in_point_form_for_easy_reading():
+    source = (
+        "Photosynthesis happens in chloroplasts. It converts light energy into chemical energy. "
+        "The process has two stages. Light reactions begin when chlorophyll absorbs sunlight."
+    )
+    formatted = format_for_learning(source)
+
+    assert "Key ideas:" in formatted
+    assert "•" in formatted
+    assert "Photosynthesis happens in chloroplasts." in formatted

@@ -3,6 +3,8 @@ using the local Biology NLP engine. No external APIs are used.
 """
 import io
 import re
+import shutil
+from pathlib import Path
 
 import pytesseract
 from PIL import Image, ImageOps, ImageFilter
@@ -24,10 +26,38 @@ def _preprocess(img: Image.Image) -> Image.Image:
     return img.filter(ImageFilter.SHARPEN)
 
 
+def _missing_tesseract_message():
+    return (
+        "Image OCR requires Tesseract OCR. Install Tesseract and add it to PATH, "
+        "then restart the backend to enable diagram and image reading."
+    )
+
+
+def _tesseract_path():
+    executable = shutil.which("tesseract")
+    if executable:
+        return executable
+    candidates = [
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+    ]
+    for candidate in candidates:
+        if Path(candidate).exists():
+            pytesseract.pytesseract.tesseract_cmd = candidate
+            return candidate
+    return None
+
+
 def extract_labels(image_bytes: bytes):
     """OCR the image and return de-duplicated candidate label phrases."""
-    img = Image.open(io.BytesIO(image_bytes))
-    text = pytesseract.image_to_string(_preprocess(img))
+    if not _tesseract_path():
+        return []
+    try:
+        img = Image.open(io.BytesIO(image_bytes))
+        text = pytesseract.image_to_string(_preprocess(img))
+    except Exception:
+        return []
+
     raw_lines = re.split(r"[\n,;|/]+", text)
     labels, seen = [], set()
     for line in raw_lines:
@@ -48,6 +78,15 @@ def extract_labels(image_bytes: bytes):
 
 def explain_diagram(image_bytes: bytes):
     """Extract labels and explain the ones that fall within the Biology domain."""
+    if not _tesseract_path():
+        return {
+            "detected_labels": [],
+            "explained_labels": [],
+            "overall_topic": None,
+            "recognized_count": 0,
+            "message": _missing_tesseract_message(),
+        }
+
     engine.load()
     labels = extract_labels(image_bytes)
     explained, topic_counts = [], {}
@@ -69,4 +108,5 @@ def explain_diagram(image_bytes: bytes):
         "explained_labels": explained,
         "overall_topic": engine.display_names.get(overall_topic) if overall_topic else None,
         "recognized_count": len(explained),
+        "message": None,
     }

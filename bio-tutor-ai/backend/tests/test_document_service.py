@@ -1,7 +1,9 @@
 import io
+import shutil
 
 import pytest
 
+import diagram_service
 import document_service
 
 
@@ -81,3 +83,10 @@ def test_extracts_xlsx_worksheet_cells():
     assert units[0]["source_label"] == "Sheet: Photosynthesis"
     assert "Light reactions" in units[0]["text"]
     assert "Thylakoid membrane" in units[0]["text"]
+
+
+def test_missing_tesseract_is_handled_gracefully(monkeypatch):
+    monkeypatch.setattr(shutil, "which", lambda cmd: None)
+
+    assert document_service._image_text_or_empty(b"fake-image") == ""
+    assert diagram_service.extract_labels(b"fake-image") == []

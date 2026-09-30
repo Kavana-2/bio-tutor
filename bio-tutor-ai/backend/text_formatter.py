@@ -53,6 +53,22 @@ def format_for_learning(text: str) -> str:
     normalized = _reflow(text)
     if not normalized:
         return ""
+
+    paragraphs = [part.strip() for part in normalized.split("\n\n") if part.strip()]
+    if len(paragraphs) > 1:
+        sections = []
+        for index, paragraph in enumerate(paragraphs, 1):
+            sentences = _split_sentences(paragraph)
+            if len(sentences) <= 1:
+                sections.append(f"Point {index}:\n{paragraph}")
+            else:
+                first = sentences[0]
+                rest = sentences[1:]
+                lines = [f"• {sentence}" for sentence in rest] if rest else []
+                body = first if not lines else first + "\n" + "\n".join(lines)
+                sections.append(f"Point {index}:\n{body}")
+        return "\n\n".join(sections)
+
     sentences = _split_sentences(normalized)
     if len(sentences) <= 1:
         return normalized
@@ -70,6 +86,6 @@ def format_for_learning(text: str) -> str:
         ))
         return "\n\n".join(sections)
 
-    return "Key statement from your notes:\n" + sentences[0] + "\n\nDetails:\n" + "\n".join(
+    return "Key statement from your notes:\n" + sentences[0] + "\n\nKey ideas:\n" + "\n".join(
         f"• {sentence}" for sentence in sentences[1:]
     )
