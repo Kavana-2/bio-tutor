@@ -1,0 +1,402 @@
+[
+  {
+    "id": "photosynthesis_01",
+    "question": "What is photosynthesis?",
+    "expected_topic": "photosynthesis",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Directly matches the base biology corpus."
+  },
+  {
+    "id": "photosynthesis_02",
+    "question": "Write the balanced equation for photosynthesis.",
+    "expected_topic": "photosynthesis",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct question with an exact answer in the corpus."
+  },
+  {
+    "id": "photosynthesis_03",
+    "question": "What is the role of chlorophyll in photosynthesis?",
+    "expected_topic": "photosynthesis",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct concept question."
+  },
+  {
+    "id": "photosynthesis_04",
+    "question": "Where does photosynthesis take place?",
+    "expected_topic": "photosynthesis",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct fact retrieval."
+  },
+  {
+    "id": "photosynthesis_05",
+    "question": "What are the light-dependent reactions?",
+    "expected_topic": "photosynthesis",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct process question."
+  },
+  {
+    "id": "photosynthesis_06",
+    "question": "What happens in the Calvin cycle?",
+    "expected_topic": "photosynthesis",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct process question."
+  },
+  {
+    "id": "photosynthesis_07",
+    "question": "What are stomata and what is their function?",
+    "expected_topic": "photosynthesis",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct concept question."
+  },
+  {
+    "id": "photosynthesis_08",
+    "question": "What are the limiting factors of photosynthesis?",
+    "expected_topic": "photosynthesis",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct concept question."
+  },
+  {
+    "id": "photosynthesis_09",
+    "question": "What is photophosphorylation?",
+    "expected_topic": "photosynthesis",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Defined in the corpus."
+  },
+  {
+    "id": "photosynthesis_10",
+    "question": "Why do plants appear green?",
+    "expected_topic": "photosynthesis",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct explanation in dataset."
+  },
+  {
+    "id": "digestion_01",
+    "question": "What is digestion?",
+    "expected_topic": "digestion",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct definition question."
+  },
+  {
+    "id": "digestion_02",
+    "question": "Where does digestion begin?",
+    "expected_topic": "digestion",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct concept question."
+  },
+  {
+    "id": "digestion_03",
+    "question": "What is the function of saliva?",
+    "expected_topic": "digestion",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct dataset fact."
+  },
+  {
+    "id": "digestion_04",
+    "question": "What are the four types of teeth and their functions?",
+    "expected_topic": "digestion",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct answer in the corpus."
+  },
+  {
+    "id": "digestion_05",
+    "question": "What is the role of hydrochloric acid in the stomach?",
+    "expected_topic": "digestion",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct biology fact."
+  },
+  {
+    "id": "digestion_06",
+    "question": "What does pepsin do?",
+    "expected_topic": "digestion",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct concept question."
+  },
+  {
+    "id": "digestion_07",
+    "question": "What are the three parts of the small intestine?",
+    "expected_topic": "digestion",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Exact answer present in dataset."
+  },
+  {
+    "id": "digestion_08",
+    "question": "What is the role of bile in digestion?",
+    "expected_topic": "digestion",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct question."
+  },
+  {
+    "id": "digestion_09",
+    "question": "What are villi and what is their function?",
+    "expected_topic": "digestion",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct concept question."
+  },
+  {
+    "id": "digestion_10",
+    "question": "What is peristalsis?",
+    "expected_topic": "digestion",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Definition in corpus."
+  },
+  {
+    "id": "respiratory_01",
+    "question": "What is the respiratory system?",
+    "expected_topic": "respiratory",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct question."
+  },
+  {
+    "id": "respiratory_02",
+    "question": "What is the difference between breathing and respiration?",
+    "expected_topic": "respiratory",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct comparison question."
+  },
+  {
+    "id": "respiratory_03",
+    "question": "What is the function of the nasal cavity?",
+    "expected_topic": "respiratory",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct concept question."
+  },
+  {
+    "id": "respiratory_04",
+    "question": "What is the function of the trachea?",
+    "expected_topic": "respiratory",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct anatomy question."
+  },
+  {
+    "id": "respiratory_05",
+    "question": "What are alveoli and what is their function?",
+    "expected_topic": "respiratory",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct structure question."
+  },
+  {
+    "id": "respiratory_06",
+    "question": "How does gas exchange occur in the lungs?",
+    "expected_topic": "respiratory",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct mechanism question."
+  },
+  {
+    "id": "respiratory_07",
+    "question": "What happens during inhalation?",
+    "expected_topic": "respiratory",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct process question."
+  },
+  {
+    "id": "respiratory_08",
+    "question": "What happens during exhalation?",
+    "expected_topic": "respiratory",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct process question."
+  },
+  {
+    "id": "respiratory_09",
+    "question": "How is oxygen transported in the blood?",
+    "expected_topic": "respiratory",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct question on respiratory transport."
+  },
+  {
+    "id": "respiratory_10",
+    "question": "How are alveoli adapted for efficient gas exchange?",
+    "expected_topic": "respiratory",
+    "domain": "in_domain",
+    "expected_behavior": "accept",
+    "notes": "Direct higher-order respiratory question."
+  },
+  {
+    "id": "near_01",
+    "question": "What is the role of chlorophyll in plant cells?",
+    "expected_topic": "photosynthesis",
+    "domain": "near_domain",
+    "expected_behavior": "accept",
+    "notes": "Biology-adjacent and semantically close to the photosynthesis corpus."
+  },
+  {
+    "id": "near_02",
+    "question": "How do guard cells regulate gas exchange in leaves?",
+    "expected_topic": "photosynthesis",
+    "domain": "near_domain",
+    "expected_behavior": "accept",
+    "notes": "Closely related to plant gas exchange."
+  },
+  {
+    "id": "near_03",
+    "question": "Why is the small intestine highly folded?",
+    "expected_topic": "digestion",
+    "domain": "near_domain",
+    "expected_behavior": "accept",
+    "notes": "Digestive-system-related but phrased in a broader explanatory form."
+  },
+  {
+    "id": "near_04",
+    "question": "How do enzymes help break down food?",
+    "expected_topic": "digestion",
+    "domain": "near_domain",
+    "expected_behavior": "accept",
+    "notes": "Biology-adjacent and related to digestion."
+  },
+  {
+    "id": "near_05",
+    "question": "How do the lungs maintain oxygen supply during exercise?",
+    "expected_topic": "respiratory",
+    "domain": "near_domain",
+    "expected_behavior": "accept",
+    "notes": "Respiratory adaptation question with slightly broader wording."
+  },
+  {
+    "id": "near_06",
+    "question": "What happens to carbon dioxide after it diffuses into the blood?",
+    "expected_topic": "respiratory",
+    "domain": "near_domain",
+    "expected_behavior": "accept",
+    "notes": "Strongly connected to respiratory physiology."
+  },
+  {
+    "id": "near_07",
+    "question": "Why do leaves contain chloroplasts?",
+    "expected_topic": "photosynthesis",
+    "domain": "near_domain",
+    "expected_behavior": "accept",
+    "notes": "Photosynthesis-related question with general wording."
+  },
+  {
+    "id": "near_08",
+    "question": "How does bile help in the digestion of fats?",
+    "expected_topic": "digestion",
+    "domain": "near_domain",
+    "expected_behavior": "accept",
+    "notes": "Digestive question with a more explanatory phrasing."
+  },
+  {
+    "id": "near_09",
+    "question": "What role does oxygen play in cellular respiration?",
+    "expected_topic": "respiratory",
+    "domain": "near_domain",
+    "expected_behavior": "accept",
+    "notes": "Biology-related question near the respiratory domain."
+  },
+  {
+    "id": "near_10",
+    "question": "How are glucose and oxygen connected to plant energy metabolism?",
+    "expected_topic": "photosynthesis",
+    "domain": "near_domain",
+    "expected_behavior": "accept",
+    "notes": "Conceptually close to the photosynthesis corpus."
+  },
+  {
+    "id": "out_01",
+    "question": "Who won the FIFA World Cup in 2022?",
+    "expected_topic": "out_of_domain",
+    "domain": "out_of_domain",
+    "expected_behavior": "refuse",
+    "notes": "Clearly unrelated to the biology domain."
+  },
+  {
+    "id": "out_02",
+    "question": "What is the capital of France?",
+    "expected_topic": "out_of_domain",
+    "domain": "out_of_domain",
+    "expected_behavior": "refuse",
+    "notes": "General knowledge question outside the biology scope."
+  },
+  {
+    "id": "out_03",
+    "question": "Explain the theory of relativity.",
+    "expected_topic": "out_of_domain",
+    "domain": "out_of_domain",
+    "expected_behavior": "refuse",
+    "notes": "Unrelated to Biology topic restriction."
+  },
+  {
+    "id": "out_04",
+    "question": "What are the causes of inflation in economics?",
+    "expected_topic": "out_of_domain",
+    "domain": "out_of_domain",
+    "expected_behavior": "refuse",
+    "notes": "Economics question outside the system scope."
+  },
+  {
+    "id": "out_05",
+    "question": "Write a JavaScript function to sort an array.",
+    "expected_topic": "out_of_domain",
+    "domain": "out_of_domain",
+    "expected_behavior": "refuse",
+    "notes": "Programming question unrelated to biology."
+  },
+  {
+    "id": "out_06",
+    "question": "Who is the president of the United States?",
+    "expected_topic": "out_of_domain",
+    "domain": "out_of_domain",
+    "expected_behavior": "refuse",
+    "notes": "General politics question."
+  },
+  {
+    "id": "out_07",
+    "question": "What is the boiling point of water at sea level?",
+    "expected_topic": "out_of_domain",
+    "domain": "out_of_domain",
+    "expected_behavior": "refuse",
+    "notes": "This is general science but outside the restricted dataset topics."
+  },
+  {
+    "id": "out_08",
+    "question": "How do you train a neural network in PyTorch?",
+    "expected_topic": "out_of_domain",
+    "domain": "out_of_domain",
+    "expected_behavior": "refuse",
+    "notes": "Machine learning question outside the biology scope."
+  },
+  {
+    "id": "out_09",
+    "question": "What is the largest ocean in the world?",
+    "expected_topic": "out_of_domain",
+    "domain": "out_of_domain",
+    "expected_behavior": "refuse",
+    "notes": "General knowledge outside the system's biology restriction."
+  },
+  {
+    "id": "out_10",
+    "question": "Explain the causes of the Cold War.",
+    "expected_topic": "out_of_domain",
+    "domain": "out_of_domain",
+    "expected_behavior": "refuse",
+    "notes": "History question outside the restricted domain."
+  }
+]
